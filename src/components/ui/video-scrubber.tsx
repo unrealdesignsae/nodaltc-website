@@ -7,9 +7,9 @@ interface VideoScrubberProps {
   src: string;
 }
 
-// One cached frame every 2% → 51 frames total
-const PCT_STEP = 2;
-const SLOTS = Math.floor(100 / PCT_STEP) + 1; // 51
+// One cached frame every 1% → 101 frames total
+const PCT_STEP = 1;
+const SLOTS = Math.floor(100 / PCT_STEP) + 1; // 101
 
 export default function VideoScrubber({ seekFnRef, src }: VideoScrubberProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -111,7 +111,6 @@ export default function VideoScrubber({ seekFnRef, src }: VideoScrubberProps) {
           secondary.addEventListener("seeked", () => r(), { once: true })
         );
         await capture(secondary, slot);
-        await new Promise(r => setTimeout(r, 0)); // yield
       }
       prefetchRunning = false;
     }
@@ -137,7 +136,7 @@ export default function VideoScrubber({ seekFnRef, src }: VideoScrubberProps) {
       // Seek to 0 to paint first frame on canvas
       primary.currentTime = 0.001;
       secondary.currentTime = 0;
-      setTimeout(prefetch, 500);
+      setTimeout(prefetch, 50);
     }
     primary.addEventListener("loadedmetadata", onMetadata);
 

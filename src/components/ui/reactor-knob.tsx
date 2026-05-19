@@ -13,7 +13,7 @@ import {
 // ─── Configuration ───────────────────────────────────────────────────────────
 const MIN_DEG = -135;
 const MAX_DEG = 135;
-const TOTAL_TICKS = 40;
+const TOTAL_TICKS = 80;
 const DEGREES_PER_TICK = (MAX_DEG - MIN_DEG) / TOTAL_TICKS;
 
 // ─── Tick Mark ───────────────────────────────────────────────────────────────
@@ -79,9 +79,9 @@ export default function ReactorKnob({
   const snappedRotation = useMotionValue(MIN_DEG);
   // Physics spring on the snapped value
   const smoothRotation = useSpring(snappedRotation, {
-    stiffness: 400,
-    damping: 35,
-    mass: 0.8,
+    stiffness: 900,
+    damping: 50,
+    mass: 0.4,
   });
 
   // Derived values for visuals
