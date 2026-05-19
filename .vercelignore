@@ -1,0 +1,9 @@
+# Non-web assets — exclude from Vercel uploads
+deliverables/
+instagram/
+brand/
+
+work_images/
+*.pdf
+*.zip
+ntc-website.zip
