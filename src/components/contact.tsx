@@ -12,6 +12,10 @@ const EVENT_TYPES = [
   "Other",
 ];
 
+// ⬇️ Paste your free Web3Forms access key here.
+// Get it in 30s at https://web3forms.com — just enter info@nodaltc.com and check that inbox.
+const WEB3FORMS_ACCESS_KEY = "aab72214-a231-401a-a55b-3538d2f2d449";
+
 function Field({
   label,
   children,
@@ -35,15 +39,58 @@ const inputBase =
 export function Contact() {
   const [active, setActive] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      formRef.current?.reset();
-    }, 4000);
+    setError(null);
+
+    const formData = new FormData(e.currentTarget);
+
+    // Honeypot: hidden field only bots fill in — silently drop the submission.
+    if (formData.get("botcheck")) return;
+
+    const payload = {
+      access_key: WEB3FORMS_ACCESS_KEY,
+      subject: `New brief from ${formData.get("name") || "the website"}`,
+      from_name: "Nodal TC Website",
+      name: formData.get("name"),
+      company: formData.get("company"),
+      email: formData.get("email"),
+      event_type: active,
+      brief: formData.get("brief"),
+      replyto: formData.get("email"),
+    };
+
+    setSending(true);
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+
+      if (!data.success) {
+        throw new Error("Send failed");
+      }
+
+      setSubmitted(true);
+      setActive(null);
+      setTimeout(() => {
+        setSubmitted(false);
+        formRef.current?.reset();
+      }, 4000);
+    } catch {
+      setError("Something went wrong. Please email us directly at info@nodaltc.com.");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -193,11 +240,23 @@ export function Contact() {
                   transition={{ duration: 0.3 }}
                   className="flex flex-col gap-8"
                 >
+                  {/* Honeypot — hidden from users, catches bots */}
+                  <input
+                    type="checkbox"
+                    name="botcheck"
+                    className="hidden"
+                    style={{ display: "none" }}
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                  />
+
                   {/* Name + Company row */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                     <Field label="Name">
                       <input
                         type="text"
+                        name="name"
                         placeholder="Your name"
                         required
                         className={inputBase}
@@ -206,6 +265,7 @@ export function Contact() {
                     <Field label="Company">
                       <input
                         type="text"
+                        name="company"
                         placeholder="Organisation"
                         className={inputBase}
                       />
@@ -215,6 +275,7 @@ export function Contact() {
                   <Field label="Email">
                     <input
                       type="email"
+                      name="email"
                       placeholder="your@email.com"
                       required
                       className={inputBase}
@@ -248,19 +309,27 @@ export function Contact() {
 
                   <Field label="Brief">
                     <textarea
+                      name="brief"
                       rows={4}
                       placeholder="Event scale, location, timeline, technical needs..."
                       className={`${inputBase} resize-none`}
                     />
                   </Field>
 
+                  {error && (
+                    <p className="text-xs text-[#ff6b6b] font-[var(--font-mono)]">
+                      {error}
+                    </p>
+                  )}
+
                   <button
                     type="submit"
-                    className="self-start group relative inline-flex items-center gap-3 font-[var(--font-display)] font-bold text-sm tracking-wider uppercase text-black bg-[#00d4ff] px-8 py-3.5 overflow-hidden transition-all duration-300 hover:shadow-[0_0_40px_rgba(0,212,255,0.25)] active:scale-[0.98]"
+                    disabled={sending}
+                    className="self-start group relative inline-flex items-center gap-3 font-[var(--font-display)] font-bold text-sm tracking-wider uppercase text-black bg-[#00d4ff] px-8 py-3.5 overflow-hidden transition-all duration-300 hover:shadow-[0_0_40px_rgba(0,212,255,0.25)] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {/* Sheen on hover */}
                     <span className="absolute inset-0 -translate-x-full group-hover:translate-x-0 bg-white/20 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" />
-                    <span className="relative">Send brief</span>
+                    <span className="relative">{sending ? "Sending..." : "Send brief"}</span>
                     <svg
                       className="relative w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
                       viewBox="0 0 16 16"
