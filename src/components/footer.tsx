@@ -44,7 +44,9 @@ export function Footer() {
           <div className="flex gap-6">
             {/* LinkedIn */}
             <a
-              href="#"
+              href="https://www.linkedin.com/in/sem-elitas-925801107/"
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label="LinkedIn"
               className="group relative min-h-11 min-w-11 flex items-center justify-center text-[#4a5568] transition-all duration-300 hover:text-[#00d4ff] hover:drop-shadow-[0_0_8px_rgba(0,212,255,0.6)]"
             >
@@ -53,7 +55,9 @@ export function Footer() {
 
             {/* Instagram */}
             <a
-              href="#"
+              href="https://www.instagram.com/semelitas/"
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label="Instagram"
               className="group relative min-h-11 min-w-11 flex items-center justify-center text-[#4a5568] transition-all duration-300 hover:text-[#b464ff] hover:drop-shadow-[0_0_8px_rgba(180,100,255,0.6)]"
             >
