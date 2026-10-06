@@ -24,3 +24,13 @@ Production build/TypeScript, changed-file ESLint, git diff checks and scripts/ve
 PageSpeed Insights baseline: homepage mobile 62 (FCP 2.5s, LCP 39.3s, TBT 50ms, CLS 0); survey mobile 96 (LCP 2.6s), desktop 68 (TBT 520ms). Lab scores vary and are not field-user measurements. Post-release results are recorded separately after deployment.
 
 Original media and local original-site backup remain untouched. Existing dependency audit findings are a separate unresolved maintenance item; this audit does not claim a security review or perfect performance on every device.
+
+## Production measurements
+
+Performance release a531e99 was published as dpl_J27L48GS5hursAri9B6feus2Lbd4 and explicitly aliased to nodaltc.com. Live checks confirm one video decoder, deferred engineering images, loaded 1536px scan originals, moving scan line, working process globe and no captured page errors.
+
+- Homepage: mobile 71, desktop 97; mobile LCP 5.4s (baseline 39.3s), TBT 10ms, CLS 0. Accessibility 100. Report: https://pagespeed.web.dev/analysis/https-nodaltc-com/l46yn33s9n
+- Survey first run: mobile 83, desktop 83; desktop TBT 280ms (baseline 520ms). Report: https://pagespeed.web.dev/analysis/https-nodaltc-com-site-survey/4rlxhrby67
+- Survey repeat: mobile 96, desktop 100; mobile LCP 2.4s, TBT 140ms, CLS 0. Report: https://pagespeed.web.dev/analysis/https-nodaltc-com-site-survey/38ny905rgc
+
+These two survey runs illustrate substantial lab variability; neither guarantees real-device performance. The reports exposed a skipped heading level introduced by the highlight-list correction; final follow-up uses h2 for these section headings with identical styling. That semantic-only correction is build/lint checked separately. Original large media and animation costs remain the main slow-connection limitations; no image derivatives were made.

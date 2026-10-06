@@ -11,7 +11,7 @@ export function SurveyHighlights() {
     <ul className="survey-highlights-grid">
       {highlights.map(({ Icon, value, label, detail }) => <li className="survey-highlight" key={value} data-reveal>
         <div className="survey-highlight-icon" aria-hidden="true"><Icon size={34} strokeWidth={1.25}/></div>
-        <div className="survey-highlight-copy"><h3>{value}</h3><div className="survey-highlight-details"><span>{label}</span><p>{detail}</p></div></div>
+        <div className="survey-highlight-copy"><h2>{value}</h2><div className="survey-highlight-details"><span>{label}</span><p>{detail}</p></div></div>
       </li>)}
     </ul>
     <p className="survey-highlights-note">*Subject to site reception and correction signal.</p>
