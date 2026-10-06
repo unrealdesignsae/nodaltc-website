@@ -8,14 +8,14 @@ const HalideLanding: React.FC = () => {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     // Only add parallax on pointer (non-touch) devices to avoid janky mobile behaviour
     const hasPointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
     const handleMouseMove = (e: MouseEvent) => {
-      const x = (window.innerWidth / 2 - e.pageX) / 25;
-      const y = (window.innerHeight / 2 - e.pageY) / 25;
+      const x = (window.innerWidth / 2 - e.clientX) / 25;
+      const y = (window.innerHeight / 2 - e.clientY) / 25;
       canvas.style.transform = `rotateX(${55 + y / 2}deg) rotateZ(${-25 + x / 2}deg)`;
       layersRef.current.forEach((layer, index) => {
         if (!layer) return;
@@ -174,7 +174,7 @@ const HalideLanding: React.FC = () => {
         }
       `}</style>
 
-      <section className="halide-section">
+      <section id="engineering" className="halide-section">
 
 
         {/* UI Chrome */}

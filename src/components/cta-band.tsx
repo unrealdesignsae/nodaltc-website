@@ -1,23 +1,25 @@
 "use client";
-import { useScroll, useTransform } from "framer-motion";
+import { useScroll, useTransform, useReducedMotion } from "framer-motion";
 import React from "react";
 import { GoogleGeminiEffect } from "@/components/ui/google-gemini-effect";
 
 export function CTABand() {
   const ref = React.useRef(null);
+  const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   });
 
-  const pathLengthFirst = useTransform(scrollYProgress, [0, 0.8], [0.2, 1.2]);
-  const pathLengthSecond = useTransform(scrollYProgress, [0, 0.8], [0.15, 1.2]);
-  const pathLengthThird = useTransform(scrollYProgress, [0, 0.8], [0.1, 1.2]);
-  const pathLengthFourth = useTransform(scrollYProgress, [0, 0.8], [0.05, 1.2]);
-  const pathLengthFifth = useTransform(scrollYProgress, [0, 0.8], [0, 1.2]);
+  const pathLengthFirst = useTransform(scrollYProgress, [0, 0.8], [reduceMotion ? 1.2 : 0.2, 1.2]);
+  const pathLengthSecond = useTransform(scrollYProgress, [0, 0.8], [reduceMotion ? 1.2 : 0.15, 1.2]);
+  const pathLengthThird = useTransform(scrollYProgress, [0, 0.8], [reduceMotion ? 1.2 : 0.1, 1.2]);
+  const pathLengthFourth = useTransform(scrollYProgress, [0, 0.8], [reduceMotion ? 1.2 : 0.05, 1.2]);
+  const pathLengthFifth = useTransform(scrollYProgress, [0, 0.8], [reduceMotion ? 1.2 : 0, 1.2]);
 
   return (
     <section
+      id="conversation"
       ref={ref}
       className="h-[300vh] w-full relative overflow-clip"
     >

@@ -1,0 +1,52 @@
+/* Shared Nodal site and client feedback revision. */
+:where(.quiet-site, .privacy-page) .unreal-title{font-size:clamp(64px,13.4vw,198px);margin:0;letter-spacing:-.065em}
+:where(.quiet-site, .privacy-page) .unreal-line{line-height:1.1;padding:.04em 0;margin:-.04em 0}:where(.quiet-site, .privacy-page) .unreal-line.indent{padding-left:9%}
+:where(.quiet-site, .privacy-page) .unreal-inner{gap:.12em;align-items:baseline;animation:survey-title-enter 1.4s cubic-bezier(.19,1,.22,1) .2s both}
+:where(.quiet-site, .privacy-page) .unreal-line.indent .unreal-inner{animation-delay:.32s}
+:where(.quiet-site, .privacy-page) .unreal-square{width:.73em;height:.73em;width:1cap;height:1cap;max-width:none;max-height:none;flex:none;align-self:baseline;transform-origin:center;animation:survey-square-enter 1s cubic-bezier(.19,1,.22,1) .75s both}
+:where(.quiet-site, .privacy-page) .unreal-square.cyan{animation-delay:.85s;background:#06b6d4}
+:where(.quiet-site, .privacy-page) .unreal-summary>*{animation:survey-copy-enter 1s cubic-bezier(.19,1,.22,1) .95s both}
+:where(.quiet-site, .privacy-page) .unreal-description{max-width:650px}:where(.quiet-site, .privacy-page) .unreal-service-line{font-size:15px;line-height:1.75;color:#9fb1c0;max-width:580px;margin-top:12px}:where(.quiet-site, .privacy-page) .unreal-ctas{flex-shrink:0}
+@keyframes survey-title-enter{from{transform:translateY(115%)}to{transform:translateY(0)}}
+@keyframes survey-square-enter{from{transform:scale(0)}to{transform:scale(1)}}
+@keyframes survey-copy-enter{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+:where(.quiet-site, .privacy-page) .drone-phases{display:grid;gap:18px;margin:25px 0;list-style:none}:where(.quiet-site, .privacy-page) .drone-phases li{padding-left:18px;border-left:1px solid #06b6d459;display:grid;gap:6px}:where(.quiet-site, .privacy-page) .drone-phases strong{font-size:13px;color:#d5eaf1;font-weight:500}:where(.quiet-site, .privacy-page) .drone-phases span{font-size:12px;line-height:1.8;color:#97aebc}:where(.quiet-site, .privacy-page) .studio-drone-grid{align-items:start}:where(.quiet-site, .privacy-page) .studio-drone-grid figure{position:sticky;top:140px}:where(.quiet-site, .privacy-page) .drone-phase-options{padding:18px!important;background:#06b6d408;border-left:1px solid #06b6d4!important}
+:where(.quiet-site, .privacy-page) .contact-whatsapp{display:flex;align-items:center;gap:12px;margin-top:25px;color:#a5e8ef;font-size:13px;text-align:left}:where(.quiet-site, .privacy-page) .contact-whatsapp small,:where(.quiet-site, .privacy-page) .mobile-whatsapp small{display:block;font-size:10px;color:#91aab8;margin-top:4px}:where(.quiet-site, .privacy-page) .mobile-whatsapp{display:none}
+:where(.quiet-site, .privacy-page) .footer-links{display:flex;flex-wrap:wrap;gap:12px 20px;margin-top:15px;font-size:11px;color:#97b5c5}:where(.quiet-site, .privacy-page) .original-footer .footer-links{justify-content:center;margin-bottom:25px}
+@media(max-width:760px){:where(.quiet-site, .privacy-page) .unreal-title{font-size:16.8vw;letter-spacing:-.07em}:where(.quiet-site, .privacy-page) .unreal-line.indent{padding-left:3%}:where(.quiet-site, .privacy-page) .unreal-inner{gap:.12em}:where(.quiet-site, .privacy-page) .unreal-content{gap:55px}:where(.quiet-site, .privacy-page) .unreal-service-line{font-size:13px;max-width:340px}:where(.quiet-site, .privacy-page) .unreal-tagline{font-size:18px}:where(.quiet-site, .privacy-page) .unreal-hero{padding-top:140px;min-height:90svh}:where(.quiet-site, .privacy-page) .studio-drone-grid figure{position:static}:where(.quiet-site, .privacy-page) .mobile-whatsapp{display:flex;position:fixed;bottom:16px;right:16px;z-index:90;align-items:center;gap:10px;background:#0b252e;border:1px solid #06b6d463;box-shadow:0 5px 30px #0008;padding:12px 16px;border-radius:8px;color:#a4eaf2;font-size:12px}:where(.quiet-site, .privacy-page) .mobile-whatsapp.placeholder{font-size:11px}:where(.quiet-site, .privacy-page) .quiet-footer{padding-bottom:105px}:where(.quiet-site, .privacy-page) .footer-links{gap:15px}}
+@media(prefers-reduced-motion:reduce){:where(.quiet-site, .privacy-page) .unreal-inner,:where(.quiet-site, .privacy-page) .unreal-square,:where(.quiet-site, .privacy-page) .unreal-summary>*{animation:none!important;transform:none!important;opacity:1!important}}
+
+.project-source-note{text-align:center;padding:0 24px 70px;color:#7495a5;font:10px/1.8 var(--font-mono);letter-spacing:.04em}
+
+/* Open survey highlights: no enclosing panel, borders or dividers. */
+.quiet-site .survey-highlights{position:relative;z-index:1;padding-top:72px;padding-bottom:44px}
+.quiet-site .survey-highlights-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px;margin:0}
+.quiet-site .survey-highlight{display:flex;align-items:flex-start;gap:22px;min-width:0}
+.quiet-site .survey-highlight-icon{position:relative;flex:none;width:42px;height:48px;display:grid;place-items:center;color:#06b6d4;margin-top:3px}
+.quiet-site .survey-highlight-icon:before{content:'';position:absolute;inset:-15px;background:radial-gradient(circle,#06b6d415,transparent 68%);pointer-events:none;animation:highlight-glow 5s ease-in-out infinite}
+.quiet-site .survey-highlight-icon svg{animation:highlight-drift 5s ease-in-out infinite}
+.quiet-site .survey-highlight:nth-child(2) .survey-highlight-icon svg,.quiet-site .survey-highlight:nth-child(2) .survey-highlight-icon:before{animation-delay:-1.6s}
+.quiet-site .survey-highlight:nth-child(3) .survey-highlight-icon svg,.quiet-site .survey-highlight:nth-child(3) .survey-highlight-icon:before{animation-delay:-3.2s}
+.quiet-site .survey-highlight dt{font:500 clamp(28px,2.7vw,38px)/1.15 var(--font-body);letter-spacing:-.045em;color:#06b6d4}
+.quiet-site .survey-highlight dd{margin:18px 0 0}
+.quiet-site .survey-highlight dd>span{display:block;color:#e8f0fe;font-size:13px;line-height:1.5;margin-bottom:7px}
+.quiet-site .survey-highlight dd p{color:#8ba4b4;font-size:12px;line-height:1.8;max-width:250px;margin:0}
+.quiet-site .survey-highlights-note{margin:30px 0 0 64px;color:#688491;font:10px/1.7 var(--font-body)}
+@keyframes highlight-glow{0%,100%{opacity:.45;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
+@keyframes highlight-drift{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@media(max-width:1000px){.quiet-site .survey-highlights-grid{gap:25px}.quiet-site .survey-highlight{gap:14px}.quiet-site .survey-highlight dt{font-size:29px}.quiet-site .survey-highlight-icon{width:34px}.quiet-site .survey-highlights-note{margin-left:48px}}
+@media(max-width:700px){.quiet-site .survey-highlights{padding-top:52px;padding-bottom:20px}.quiet-site .survey-highlights-grid{grid-template-columns:1fr;gap:35px}.quiet-site .survey-highlight{gap:22px}.quiet-site .survey-highlight-icon{width:38px;height:42px}.quiet-site .survey-highlight dt{font-size:30px}.quiet-site .survey-highlight dd{margin-top:9px}.quiet-site .survey-highlight dd>span{margin-bottom:3px}.quiet-site .survey-highlight dd p{max-width:260px;font-size:12px}.quiet-site .survey-highlights-note{margin:27px 0 0 60px;font-size:9px;max-width:250px}}
+@media(prefers-reduced-motion:reduce){.quiet-site .survey-highlight-icon svg,.quiet-site .survey-highlight-icon:before{animation:none}}
+
+/* Audience section shares the main page's heading and body scale. */
+.quiet-site .survey-audiences{display:grid;grid-template-columns:1fr 1.25fr;align-items:start;gap:clamp(48px,7vw,110px);margin-top:110px;scroll-margin-top:120px}
+.quiet-site .survey-audiences-intro .quiet-copy{max-width:370px;font-size:16px;line-height:1.85;margin-top:26px}
+.quiet-site .survey-audience-list{list-style:none;margin:0;padding:0;display:grid;gap:28px}
+.quiet-site .survey-audience-list li{display:flex;align-items:center;gap:24px;min-width:0;font:400 clamp(18px,1.6vw,23px)/1.5 var(--font-body);letter-spacing:-.02em;color:#dbe7ee}
+.quiet-site .survey-audience-icon{position:relative;display:grid;place-items:center;flex:0 0 48px;width:48px;min-height:54px;color:#06b6d4}
+.quiet-site .survey-audience-icon:before{content:'';position:absolute;inset:-8px;background:radial-gradient(circle,#06b6d412,transparent 70%);pointer-events:none}
+.quiet-site .survey-audience-icon svg{animation:highlight-drift 5s ease-in-out infinite}
+.quiet-site .survey-audience-list li:nth-child(2n) .survey-audience-icon svg{animation-delay:-2s}
+.quiet-site .survey-audience-list li:nth-child(3n) .survey-audience-icon svg{animation-delay:-3.5s}
+@media(max-width:760px){.quiet-site .survey-audiences{grid-template-columns:1fr;gap:38px;margin-top:72px}.quiet-site .survey-audiences-intro .quiet-copy{max-width:450px;font-size:15px;margin-top:22px}.quiet-site .survey-audience-list{gap:24px}.quiet-site .survey-audience-list li{font-size:18px;gap:18px;line-height:1.6}.quiet-site .survey-audience-icon{flex-basis:38px;width:38px;min-height:46px}.quiet-site .survey-audience-icon svg{width:30px;height:30px}}
+@media(prefers-reduced-motion:reduce){.quiet-site .survey-audience-icon svg{animation:none}}

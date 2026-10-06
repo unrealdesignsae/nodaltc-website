@@ -129,7 +129,7 @@ export function Globe({
     return () => window.removeEventListener('mousemove', onMouseMove);
   }, []);
 
-  const draw = useCallback(() => {
+  const draw = useCallback(function drawFrame() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -258,7 +258,7 @@ export function Globe({
       }
     }
 
-    animRef.current = requestAnimationFrame(draw);
+    animRef.current = requestAnimationFrame(drawFrame);
   }, [dotColor, arcColor, markerColor, autoRotateSpeed, connections, markers]);
 
   useEffect(() => {

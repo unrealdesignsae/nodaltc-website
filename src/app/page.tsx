@@ -13,16 +13,18 @@ import { TechStackIntro } from "@/components/tech-stack-intro";
 import { Projects } from "@/components/projects";
 import { CTABand } from "@/components/cta-band";
 import { Contact } from "@/components/contact";
+import { SurveySpotlight } from "@/components/survey-spotlight";
 import { Footer } from "@/components/footer";
 
 
 export default function Home() {
   return (
-    <>
+    <main id="main-content" className="main-site" tabIndex={-1}>
       <NodeCanvas />
       <Navbar />
       <HeroV2 />
       <HalideLanding />
+      <SurveySpotlight />
 
       <Services />
       <Process />
@@ -36,6 +38,6 @@ export default function Home() {
       <Contact />
       <Footer />
 
-    </>
+    </main>
   );
 }

@@ -55,7 +55,7 @@ export function Founder() {
             {/* Bio paragraphs */}
             <p className="text-[#8892a4] text-[0.95rem] leading-[1.8] mb-4">
               After 15+ years engineering the world&apos;s most demanding live
-              events — Tomorrowland, MDLBEAST Soundstorm, Electric Castle,
+              events — Tomorrowland, Al Qadsiah, Electric Castle,
               Tiësto&apos;s global touring rig — Sem Elitas distilled that
               field intelligence into a consultancy model: one that embeds at
               the technical core of your project, not just at the periphery.

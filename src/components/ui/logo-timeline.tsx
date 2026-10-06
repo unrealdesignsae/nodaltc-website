@@ -139,8 +139,7 @@ export function LogoTimeline({
                     /* travel: from just off-left to just off-right — overridden to 300vw on mobile via globals.css */
                     ['--move-x-from' as string]: 'calc(-100% - 2rem)',
                     ['--move-x-to' as string]: 'calc(100vw + 2rem)',
-                    // @ts-ignore
-                    ['--chip-glow-delay']: `${(index * 0.9 + li * 0.4).toFixed(1)}s`,
+                    ['--chip-glow-delay' as string]: `${(index * 0.9 + li * 0.4).toFixed(1)}s`,
                     animation: [
                       `move-x ${logo.animationDuration}s linear ${logo.animationDelay}s infinite`,
                       `chipGlow 3s ease-in-out ${(index * 0.9 + li * 0.4).toFixed(1)}s infinite`,

@@ -46,6 +46,9 @@ export default function VideoScrubber({ seekFnRef, src }: VideoScrubberProps) {
     // GPU-resident frame cache  (slot = Math.round(pct / PCT_STEP))
     // On iOS we store null and always drawImage directly
     const cache: (ImageBitmap | null)[] = new Array(SLOTS).fill(null);
+    let disposed = false;
+    let prefetchTimer: ReturnType<typeof setTimeout>;
+    let finishPendingSeek: (() => void) | null = null;
     let duration = 0;
     let targetPct = 0;
     let prefetchRunning = false;
@@ -82,10 +85,17 @@ export default function VideoScrubber({ seekFnRef, src }: VideoScrubberProps) {
 
     // Capture the current frame from a video element into a cache slot
     async function capture(video: HTMLVideoElement, slot: number) {
-      if (cache[slot] || !hasImageBitmap) return;
+      if (disposed || cache[slot] || !hasImageBitmap) return;
       try {
         const bm = await createImageBitmap(video);
+        if (disposed) { bm.close(); return; }
         if (!cache[slot]) cache[slot] = bm; else bm.close();
+        // Bound GPU memory without altering the original video or frame resolution.
+        const occupied = cache.map((frame, index) => frame ? index : -1).filter(index => index >= 0);
+        if (occupied.length > 12) {
+          const evict = occupied.filter(index => index !== slot).sort((a,b) => Math.abs(slotToPct(b)-targetPct)-Math.abs(slotToPct(a)-targetPct))[0];
+          cache[evict]?.close(); cache[evict] = null;
+        }
       } catch { /* ignore — mobile fallback draws directly */ }
     }
 
@@ -94,22 +104,18 @@ export default function VideoScrubber({ seekFnRef, src }: VideoScrubberProps) {
       if (prefetchRunning || duration === 0 || !hasImageBitmap) return;
       prefetchRunning = true;
 
-      const queue: number[] = [];
-      function divide(lo: number, hi: number) {
-        if (lo > hi) return;
-        const mid = Math.round((lo + hi) / 2);
-        queue.push(mid);
-        divide(lo, mid - 1);
-        divide(mid + 1, hi);
-      }
-      divide(0, SLOTS - 1);
-
+      // Sparse warm-up; exact requested frames are decoded on demand.
+      const queue = [0, 50, 100, 25, 75, 10, 90, 40, 60, 20, 80];
       for (const slot of queue) {
+        if (disposed) break;
         if (cache[slot]) continue;
-        secondary.currentTime = (slotToPct(slot) / 100) * duration;
-        await new Promise<void>(r =>
-          secondary.addEventListener("seeked", () => r(), { once: true })
-        );
+        await new Promise<void>(resolve => {
+          const done = () => { secondary.removeEventListener("seeked", done); finishPendingSeek = null; resolve(); };
+          finishPendingSeek = done;
+          secondary.addEventListener("seeked", done, { once: true });
+          secondary.currentTime = Math.max(0.001, Math.min(duration - 0.001, (slotToPct(slot) / 100) * duration));
+          if (!secondary.seeking) done();
+        });
         await capture(secondary, slot);
       }
       prefetchRunning = false;
@@ -120,7 +126,7 @@ export default function VideoScrubber({ seekFnRef, src }: VideoScrubberProps) {
       const slot = pctToSlot(targetPct);
       if (hasImageBitmap) {
         capture(primary, slot).then(() => {
-          if (pctToSlot(targetPct) === slot && cache[slot]) draw(cache[slot]!);
+          if (!disposed && pctToSlot(targetPct) === slot && cache[slot]) draw(cache[slot]!);
         });
       }
       // Always draw directly for immediate feedback (critical on mobile)
@@ -136,7 +142,7 @@ export default function VideoScrubber({ seekFnRef, src }: VideoScrubberProps) {
       // Seek to 0 to paint first frame on canvas
       primary.currentTime = 0.001;
       secondary.currentTime = 0;
-      setTimeout(prefetch, 50);
+      prefetchTimer = setTimeout(prefetch, 50);
     }
     primary.addEventListener("loadedmetadata", onMetadata);
 
@@ -171,6 +177,9 @@ export default function VideoScrubber({ seekFnRef, src }: VideoScrubberProps) {
     seekFnRef.current = seek;
 
     return () => {
+      disposed = true;
+      clearTimeout(prefetchTimer);
+      finishPendingSeek?.();
       seekFnRef.current = null;
       primary.removeEventListener("seeked", onPrimarySeeked);
       primary.removeEventListener("loadedmetadata", onMetadata);

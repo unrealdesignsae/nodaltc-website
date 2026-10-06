@@ -52,6 +52,8 @@ export function NebulaCube() {
   useEffect(() => {
     const mountEl = mountRef.current;
     if (!mountEl) return;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const timelines: gsap.core.Timeline[] = [];
 
     // ── Globe wrapper — fixed overlay ──
     const globeEl = globeWrapRef.current;
@@ -154,7 +156,7 @@ export function NebulaCube() {
         if (n.x < 0 || n.x > plexusCanvas.width)  n.vx *= -1;
         if (n.y < 0 || n.y > plexusCanvas.height)  n.vy *= -1;
       });
-      plexusRafRef.current = requestAnimationFrame(drawPlexus);
+      if (!reduceMotion) plexusRafRef.current = requestAnimationFrame(drawPlexus);
     }
     drawPlexus();
 
@@ -198,6 +200,7 @@ export function NebulaCube() {
       const title = sec.querySelector('[data-step-title]');
       const desc  = sec.querySelector('[data-step-desc]');
       const num   = sec.querySelector('[data-step-num]');
+      if (reduceMotion) { gsap.set([title, desc, num], {opacity: 1, y: 0}); return; }
       gsap.set([title, desc, num], { opacity: 0, y: 40 });
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -207,6 +210,7 @@ export function NebulaCube() {
           toggleActions: 'play none none reverse',
         },
       });
+      timelines.push(tl);
       tl.to(num,   { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, 0)
         .to(title, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 0.1)
         .to(desc,  { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 0.25);
@@ -216,10 +220,9 @@ export function NebulaCube() {
       cancelAnimationFrame(plexusRafRef.current);
       window.removeEventListener('resize', onResizePlexus);
       window.removeEventListener('scroll', updateVisibility);
-      ScrollTrigger.getAll().forEach(t => t.kill());
+      timelines.forEach(timeline => { timeline.scrollTrigger?.kill(); timeline.kill(); });
       if (mountEl.contains(plexusCanvas)) mountEl.removeChild(plexusCanvas);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -229,7 +232,7 @@ export function NebulaCube() {
       style={{ position: 'relative', width: '100%' }}
     >
       {/* ── Fixed Globe overlay ── */}
-      <div ref={globeWrapRef} style={{ opacity: 0 }}>
+      <div ref={globeWrapRef} style={{ opacity: 0, position: "fixed", inset: 0, pointerEvents: "none" }}>
         <div style={{ width: 'min(90vw, 90vh)', height: 'min(90vw, 90vh)' }}>
           <Globe
             dotColor="rgba(100, 180, 255, ALPHA)"

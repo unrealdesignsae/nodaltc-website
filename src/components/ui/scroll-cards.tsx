@@ -35,7 +35,7 @@ const Card: FC<iCardProps> = ({
 
   useEffect(() => {
     const el = cardRef.current;
-    if (!el) return;
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     el.style.opacity = "0";
     el.style.transform = "translateY(32px)";
@@ -75,6 +75,8 @@ const Card: FC<iCardProps> = ({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={src}
+            loading="lazy"
+            decoding="async"
             alt={title}
             className="absolute inset-0 w-full h-full object-cover"
           />

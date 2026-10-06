@@ -1,71 +1,25 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { projects } from "@/lib/projects-data";
 import { CardsParallax, type iCardItem } from "@/components/ui/scroll-cards";
 
-/* ─── 4 Featured Projects (scroll-card parallax) ──────────────────── */
-const featuredCards: iCardItem[] = [
-  {
-    title: "Tomorrowland — Main Stage Operations",
-    description:
-      "Full technical coordination for the world's largest EDM festival main stage. Managed audio systems architecture, power distribution, and multi-department crew coordination across build and show days.",
-    tag: "Festival",
-    src: "/images/tomorrowland-new.jpg",
-    link: "#",
-    color: "#0a0e14",
-    textColor: "#e8f0fe",
-    specs: ["400K Attendees", "Multi-Year", "Boom, Belgium"],
-  },
-  {
-    title: "MDLBEAST Soundstorm",
-    description:
-      "Technical production management for Saudi Arabia's flagship music festival. Multi-stage audio, video, and lighting systems for 200,000+ daily capacity across purpose-built desert venue.",
-    tag: "Mega-Festival",
-    src: "/images/soundstorm.jpg",
-    link: "#",
-    color: "#0a0e14",
-    textColor: "#e8f0fe",
-    specs: ["200K+ Daily", "8 Stages", "Riyadh, KSA"],
-  },
-  {
-    title: "Tiësto — International Tour Production",
-    description:
-      "Technical advancement and on-site production direction for Tiësto's touring show. Rider fulfilment, venue assessment, and full AV systems coordination across international dates.",
-    tag: "Touring",
-    src: "/images/tiesto-new.jpg",
-    link: "#",
-    color: "#0a0e14",
-    textColor: "#e8f0fe",
-    specs: ["Global Tour", "Arena Scale", "Multi-Country"],
-  },
+// Engagement details come from the supplied workbook; keep the requested order.
+const highlights = [
+  {id:1, image:'electric-castle', description:'Mainstage production management, headline advancing, rider integration and on-site show delivery.'},
+  {id:2, image:'al-qadsiah', description:'Technical direction of a multi-stage festival build: AVL and staging, vendor coordination, site layout and stage readiness for show days.'},
+  {id:7, image:'tiesto', description:'World tour production management: advancing, local suppliers, crew logistics and delivery from load-in to load-out.'},
 ];
+const featuredCards:iCardItem[]=highlights.map(({id,image,description})=>{
+  const project=projects.find(p=>p.id===id)!;
+  return {...project,description,tag:project.category,src:`/projects/${image}.png`,link:'#contact',color:'#0a0e14',textColor:'#e8f0fe',specs:[project.year,project.location]};
+});
 
-
-/* ─── Extended Field Log ──────────────────────────────────────────── */
-type Engagement = {
-  title: string;
-  category: string;
-  scale: string;
-  location: string;
-  year: string;
-};
-
-const furtherEngagements: Engagement[] = [
-  { title: "Electric Castle Festival", category: "Festival", scale: "90K Attendees", location: "Cluj, Romania", year: "Multi-Year" },
-  { title: "Untold Festival", category: "Festival", scale: "350K Total", location: "Cluj, Romania", year: "Multi-Year" },
-  { title: "David Guetta — World Tour", category: "Touring", scale: "Arena Scale", location: "Global", year: "Multi-Year" },
-  { title: "Martin Garrix — Live Production", category: "Touring", scale: "Stadium Scale", location: "Global", year: "2022–2024" },
-  { title: "Sensation White — Amsterdam", category: "Arena Show", scale: "40K Capacity", location: "Amsterdam, NL", year: "Multi-Year" },
-  { title: "Dubai Expo 2020 — AV Integration", category: "Corporate", scale: "25M Visitors", location: "Dubai, UAE", year: "2021–2022" },
-  { title: "Formula E — Race Village Production", category: "Live & Sport", scale: "Multi-Zone", location: "Various Cities", year: "Multi-Year" },
-  { title: "Creamfields UK", category: "Festival", scale: "70K Attendees", location: "Daresbury, UK", year: "Multi-Year" },
-  { title: "Ultra Music Festival — Europe", category: "Festival", scale: "100K Total", location: "Split, Croatia", year: "Multi-Year" },
-  { title: "Hardwell — Rebel Without A Pause", category: "Touring", scale: "Arena Scale", location: "Global", year: "2022–2023" },
-  { title: "Armin van Buuren — A State of Trance", category: "Branded Event", scale: "25K Per Night", location: "Various", year: "Multi-Year" },
-  { title: "Sonus Festival — Zrce Beach", category: "Festival", scale: "Boutique Scale", location: "Zrce, Croatia", year: "Multi-Year" },
-  { title: "New Year's Eve — Burj Khalifa", category: "Civic Event", scale: "1M Fireworks Viewers", location: "Dubai, UAE", year: "Multi-Year" },
-  { title: "Abu Dhabi HSBC Golf Championship", category: "Live & Sport", scale: "Stadium AV", location: "Abu Dhabi, UAE", year: "2023" },
-  { title: "Awakenings Festival", category: "Festival", scale: "50K Capacity", location: "Amsterdam, NL", year: "Multi-Year" },
+type Engagement = (typeof projects)[number];
+const featuredIds = highlights.map(project => project.id);
+const allEngagements = [
+  ...featuredIds.map(id => projects.find(project => project.id === id)!),
+  ...projects.filter(project => !featuredIds.includes(project.id)),
 ];
 
 /* ─── Animated engagement row ─────────────────────────────────────── */
@@ -74,7 +28,7 @@ function EngagementRow({ item, index }: { item: Engagement; index: number }) {
 
   useEffect(() => {
     const el = rowRef.current;
-    if (!el) return;
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     el.style.opacity = "0";
     el.style.transform = "translateX(-12px)";
     el.style.transition = `opacity 0.5s ease ${index * 0.04}s, transform 0.5s ease ${index * 0.04}s`;
@@ -157,21 +111,22 @@ export function Projects() {
 
       {/* ─── Parallax Scroll Cards ─── */}
       <CardsParallax items={featuredCards} />
+      <p className="project-source-note">Al Qadsiah photo supplied by the client. Electric Castle and Tiësto images are reference-based visualizations. Project details supplied by Nodal.</p>
 
-      {/* ─── Further Engagements Log ─── */}
+      {/* ─── All Projects Log ─── */}
       <div className="max-w-[1200px] mx-auto px-6 pb-[100px] pt-24">
         {/* Sub-header */}
         <div className="flex items-end justify-between mb-8 border-b border-[rgba(0,212,255,0.12)] pb-5">
           <div>
             <span className="font-[var(--font-mono)] text-[0.6rem] text-[#00d4ff]/70 tracking-[0.2em] uppercase block mb-2">
-              Extended Field Log
+              Complete Project List
             </span>
             <h3 className="font-[var(--font-display)] text-xl font-semibold text-[#e8f0fe]">
-              Further Engagements
+              All Projects
             </h3>
           </div>
           <span className="font-[var(--font-mono)] text-[0.65rem] text-[#4a5568] tracking-widest">
-            {furtherEngagements.length} Records
+            {allEngagements.length} Records
           </span>
         </div>
 
@@ -190,7 +145,7 @@ export function Projects() {
               </tr>
             </thead>
             <tbody>
-              {furtherEngagements.map((item, i) => (
+              {allEngagements.map((item, i) => (
                 <EngagementRow key={item.title} item={item} index={i} />
               ))}
             </tbody>
@@ -199,7 +154,7 @@ export function Projects() {
 
         {/* Footer note */}
         <p className="font-[var(--font-mono)] text-[0.65rem] text-[#4a5568] mt-8 tracking-widest text-right">
-          Partial record — NDA-governed engagements excluded
+          Project record supplied by Nodal
         </p>
       </div>
     </section>

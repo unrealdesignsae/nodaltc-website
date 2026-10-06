@@ -35,6 +35,12 @@ export function NodeCanvas() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let heroVisible = true;
+    const hero = document.getElementById('hero');
+    const observer = hero ? new IntersectionObserver(([entry]) => { heroVisible = entry.isIntersecting; }) : null;
+    if (hero) observer?.observe(hero);
+
     // ── Init ────────────────────────────────────────────────────────────────
     function resize() {
       if (!canvas) return;
@@ -46,7 +52,7 @@ export function NodeCanvas() {
     function spawn() {
       if (!canvas) return;
       nodesRef.current = [];
-      for (let i = 0; i < NODE_COUNT; i++) {
+      for (let i = 0; i < (window.innerWidth < 768 ? 32 : NODE_COUNT); i++) {
         const isHub = Math.random() < HUB_CHANCE;
         nodesRef.current.push({
           x:          Math.random() * canvas.width,
@@ -65,6 +71,11 @@ export function NodeCanvas() {
     function draw() {
       if (!canvas || !ctx) return;
 
+      if (document.hidden || heroVisible || motionQuery.matches) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        animRef.current = requestAnimationFrame(draw);
+        return;
+      }
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const nodes = nodesRef.current;
       const mx = mouse.current.x;
@@ -211,6 +222,7 @@ export function NodeCanvas() {
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseleave", onMouseLeave);
+      observer?.disconnect();
       cancelAnimationFrame(animRef.current);
     };
   }, []);
@@ -218,7 +230,7 @@ export function NodeCanvas() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 z-0 pointer-events-none opacity-15"
+      className="nodal-network fixed inset-0 z-0 pointer-events-none"
       aria-hidden="true"
     />
   );

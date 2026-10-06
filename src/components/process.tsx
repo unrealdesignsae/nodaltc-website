@@ -9,7 +9,7 @@ const NebulaCube = dynamic(
 
 export function Process() {
   return (
-    <section id="about">
+    <section id="about" style={{ minHeight: "500vh" }}>
       <NebulaCube />
     </section>
   );

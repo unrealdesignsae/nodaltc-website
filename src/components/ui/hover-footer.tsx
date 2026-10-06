@@ -1,6 +1,6 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export const TextHoverEffect = ({
@@ -13,13 +13,14 @@ export const TextHoverEffect = ({
   automatic?: boolean;
   className?: string;
 }) => {
+  const reducedMotion = useReducedMotion();
   const svgRef = useRef<SVGSVGElement>(null);
   const [cursor, setCursor] = useState({ x: 0, y: 0 });
   const [hovered, setHovered] = useState(false);
   const [maskPosition, setMaskPosition] = useState({ cx: "50%", cy: "50%" });
 
   useEffect(() => {
-    if (svgRef.current && cursor.x !== null && cursor.y !== null) {
+    if (hovered && svgRef.current) {
       const svgRect = svgRef.current.getBoundingClientRect();
       const cxPercentage = ((cursor.x - svgRect.left) / svgRect.width) * 100;
       const cyPercentage = ((cursor.y - svgRect.top) / svgRect.height) * 100;
@@ -28,7 +29,7 @@ export const TextHoverEffect = ({
         cy: `${cyPercentage}%`,
       });
     }
-  }, [cursor]);
+  }, [cursor, hovered]);
 
   return (
     <svg
@@ -50,7 +51,7 @@ export const TextHoverEffect = ({
           cy="50%"
           r="25%"
         >
-          {hovered && (
+          {(
             <>
               <stop offset="0%" stopColor="#00d4ff" />
               <stop offset="25%" stopColor="#0090ff" />
@@ -66,7 +67,7 @@ export const TextHoverEffect = ({
           gradientUnits="userSpaceOnUse"
           r="20%"
           initial={{ cx: "50%", cy: "50%" }}
-          animate={maskPosition}
+          animate={hovered ? maskPosition : { cx: "50%", cy: "50%" }}
           transition={{ duration: duration ?? 0, ease: "easeOut" }}
         >
           <stop offset="0%" stopColor="white" />
@@ -106,7 +107,7 @@ export const TextHoverEffect = ({
           strokeDasharray: 1000,
         }}
         transition={{
-          duration: 4,
+          duration: reducedMotion ? 0 : 4,
           ease: "easeInOut",
         }}
       >
