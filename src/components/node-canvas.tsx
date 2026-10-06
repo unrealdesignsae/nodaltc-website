@@ -38,7 +38,7 @@ export function NodeCanvas() {
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     let heroVisible = true;
     const hero = document.getElementById('hero');
-    const observer = hero ? new IntersectionObserver(([entry]) => { heroVisible = entry.isIntersecting; }) : null;
+    const observer = hero ? new IntersectionObserver(([entry]) => { heroVisible = entry.isIntersecting; syncAnimation(); }) : null;
     if (hero) observer?.observe(hero);
 
     // ── Init ────────────────────────────────────────────────────────────────
@@ -73,7 +73,6 @@ export function NodeCanvas() {
 
       if (document.hidden || heroVisible || motionQuery.matches) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        animRef.current = requestAnimationFrame(draw);
         return;
       }
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -212,6 +211,12 @@ export function NodeCanvas() {
       mouse.current = { x: -9999, y: -9999 };
     }
 
+    function syncAnimation() {
+      cancelAnimationFrame(animRef.current);
+      draw();
+    }
+    document.addEventListener('visibilitychange', syncAnimation);
+    motionQuery.addEventListener('change', syncAnimation);
     resize();
     draw();
     window.addEventListener("resize", resize);
@@ -222,6 +227,8 @@ export function NodeCanvas() {
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseleave", onMouseLeave);
+      document.removeEventListener("visibilitychange", syncAnimation);
+      motionQuery.removeEventListener("change", syncAnimation);
       observer?.disconnect();
       cancelAnimationFrame(animRef.current);
     };

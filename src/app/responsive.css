@@ -50,3 +50,8 @@
 @media(prefers-reduced-motion:reduce){.shared-contact-intro .animate-\[signal-pulse_2s_ease-in-out_infinite\]{animation:none}}
 .quiet-site .quiet-form-panel .submit-button{background:#00d4ff;border-color:#00d4ff;color:#070a0f;border-radius:0;font-family:var(--font-display);font-size:14px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;min-height:52px}
 .quiet-site .quiet-form-panel .submit-button:hover{box-shadow:0 0 40px #00d4ff40}
+
+/* Keep the hero controls usable on short landscape screens. */
+.main-site #hero{min-height:560px}
+[role=slider]:focus-visible{outline:2px solid #00d4ff;outline-offset:8px}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}.halide-scroll-hint{animation:none!important}}

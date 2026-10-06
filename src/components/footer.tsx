@@ -48,7 +48,7 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn"
-              className="group relative min-h-11 min-w-11 flex items-center justify-center text-[#4a5568] transition-all duration-300 hover:text-[#00d4ff] hover:drop-shadow-[0_0_8px_rgba(0,212,255,0.6)]"
+              className="group relative min-h-11 min-w-11 flex items-center justify-center text-[#8a9bad] transition-all duration-300 hover:text-[#00d4ff] hover:drop-shadow-[0_0_8px_rgba(0,212,255,0.6)]"
             >
               <LinkedInIcon />
             </a>
@@ -59,13 +59,13 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
-              className="group relative min-h-11 min-w-11 flex items-center justify-center text-[#4a5568] transition-all duration-300 hover:text-[#b464ff] hover:drop-shadow-[0_0_8px_rgba(180,100,255,0.6)]"
+              className="group relative min-h-11 min-w-11 flex items-center justify-center text-[#8a9bad] transition-all duration-300 hover:text-[#b464ff] hover:drop-shadow-[0_0_8px_rgba(180,100,255,0.6)]"
             >
               <InstagramIcon />
             </a>
           </div>
 
-          <p className="text-center font-[var(--font-mono)] text-[0.65rem] text-[#4a5568] tracking-widest uppercase">
+          <p className="text-center font-[var(--font-mono)] text-[0.65rem] text-[#8a9bad] tracking-widest uppercase">
             &copy; {new Date().getFullYear()} Nodal Technical Consultancy FZ-LLC. All rights reserved.
           </p>
         </div>

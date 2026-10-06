@@ -29,12 +29,10 @@ export default function VideoScrubber({ seekFnRef, src }: VideoScrubberProps) {
 
     // PRIMARY video — responds to knob in real-time
     const primary = document.createElement("video");
-    // SECONDARY video — background frame extraction, never shown
-    const secondary = document.createElement("video");
 
-    for (const v of [primary, secondary]) {
+    for (const v of [primary]) {
       v.src = src;
-      v.preload = "auto";
+      v.preload = "metadata";
       v.muted = true;
       v.playsInline = true;
       // Must be in DOM for iOS Safari to allow seeking without user gesture
@@ -47,11 +45,8 @@ export default function VideoScrubber({ seekFnRef, src }: VideoScrubberProps) {
     // On iOS we store null and always drawImage directly
     const cache: (ImageBitmap | null)[] = new Array(SLOTS).fill(null);
     let disposed = false;
-    let prefetchTimer: ReturnType<typeof setTimeout>;
-    let finishPendingSeek: (() => void) | null = null;
     let duration = 0;
     let targetPct = 0;
-    let prefetchRunning = false;
 
     const slotToPct = (s: number) => s * PCT_STEP;
     const pctToSlot = (p: number) => Math.round(p / PCT_STEP);
@@ -99,28 +94,6 @@ export default function VideoScrubber({ seekFnRef, src }: VideoScrubberProps) {
       } catch { /* ignore — mobile fallback draws directly */ }
     }
 
-    // Background prefetch using binary subdivision so coverage builds fast
-    async function prefetch() {
-      if (prefetchRunning || duration === 0 || !hasImageBitmap) return;
-      prefetchRunning = true;
-
-      // Sparse warm-up; exact requested frames are decoded on demand.
-      const queue = [0, 50, 100, 25, 75, 10, 90, 40, 60, 20, 80];
-      for (const slot of queue) {
-        if (disposed) break;
-        if (cache[slot]) continue;
-        await new Promise<void>(resolve => {
-          const done = () => { secondary.removeEventListener("seeked", done); finishPendingSeek = null; resolve(); };
-          finishPendingSeek = done;
-          secondary.addEventListener("seeked", done, { once: true });
-          secondary.currentTime = Math.max(0.001, Math.min(duration - 0.001, (slotToPct(slot) / 100) * duration));
-          if (!secondary.seeking) done();
-        });
-        await capture(secondary, slot);
-      }
-      prefetchRunning = false;
-    }
-
     // When primary video seeks: draw frame immediately
     function onPrimarySeeked() {
       const slot = pctToSlot(targetPct);
@@ -133,33 +106,25 @@ export default function VideoScrubber({ seekFnRef, src }: VideoScrubberProps) {
       drawVideo(primary);
     }
     primary.addEventListener("seeked", onPrimarySeeked);
+    primary.addEventListener("loadeddata", onPrimarySeeked);
 
-    // Metadata ready — draw first frame immediately, kick off prefetch
+    // Metadata ready — request the first frame only
     function onMetadata() {
       duration = primary.duration;
       canvas.width = primary.videoWidth || 1920;
       canvas.height = primary.videoHeight || 1080;
       // Seek to 0 to paint first frame on canvas
       primary.currentTime = 0.001;
-      secondary.currentTime = 0;
-      prefetchTimer = setTimeout(prefetch, 50);
     }
     primary.addEventListener("loadedmetadata", onMetadata);
 
-    // On iOS, loadedmetadata may not fire until a play() is attempted.
-    // Trigger a silent play/pause to unblock decoding.
+    // Load only the metadata/first frame. Decode other frames on user input;
+    // background seeking otherwise downloads the whole 22 MB source twice.
     primary.load();
-    const playPromise = primary.play();
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => primary.pause())
-        .catch(() => {
-          // play() blocked — that's fine, we'll seek manually
-        });
-    }
 
     // THE SEEK FUNCTION — called directly by knob in pointermove
     function seek(pct: number) {
+      pct = Math.max(0, Math.min(100, pct));
       targetPct = pct;
       const slot = pctToSlot(pct);
 
@@ -171,20 +136,18 @@ export default function VideoScrubber({ seekFnRef, src }: VideoScrubberProps) {
       }
 
       // Seek primary video (mobile: this directly triggers onPrimarySeeked → drawVideo)
-      if (duration > 0) primary.currentTime = (pct / 100) * duration;
+      if (Number.isFinite(duration) && duration > 0) primary.currentTime = Math.max(0.001, Math.min(duration - 0.001, (pct / 100) * duration));
     }
 
     seekFnRef.current = seek;
 
     return () => {
       disposed = true;
-      clearTimeout(prefetchTimer);
-      finishPendingSeek?.();
       seekFnRef.current = null;
       primary.removeEventListener("seeked", onPrimarySeeked);
+      primary.removeEventListener("loadeddata", onPrimarySeeked);
       primary.removeEventListener("loadedmetadata", onMetadata);
       primary.src = "";
-      secondary.src = "";
       hiddenContainer.innerHTML = "";
       cache.forEach(bm => bm?.close());
     };

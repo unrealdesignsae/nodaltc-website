@@ -53,7 +53,7 @@ function EngagementRow({ item, index }: { item: Engagement; index: number }) {
       className="group border-b border-[rgba(0,212,255,0.07)] hover:border-[rgba(0,212,255,0.2)] hover:bg-[rgba(0,212,255,0.03)] transition-colors duration-200 cursor-default"
     >
       {/* Index */}
-      <td className="py-3.5 pr-6 font-[var(--font-mono)] text-[0.6rem] text-[#4a5568] tracking-[0.15em] w-10 align-middle">
+      <td className="py-3.5 pr-6 font-[var(--font-mono)] text-[0.6rem] text-[#8a9bad] tracking-[0.15em] w-10 align-middle">
         {String(index + 1).padStart(2, "0")}
       </td>
 
@@ -80,14 +80,14 @@ function EngagementRow({ item, index }: { item: Engagement; index: number }) {
 
       {/* Location */}
       <td className="py-3.5 pr-6 align-middle hidden lg:table-cell">
-        <span className="font-[var(--font-mono)] text-[0.7rem] text-[#6b7280]">
+        <span className="font-[var(--font-mono)] text-[0.7rem] text-[#8a9bad]">
           {item.location}
         </span>
       </td>
 
       {/* Year */}
       <td className="py-3.5 align-middle text-right">
-        <span className="font-[var(--font-mono)] text-[0.65rem] text-[#4a5568] tracking-widest">
+        <span className="font-[var(--font-mono)] text-[0.65rem] text-[#8a9bad] tracking-widest">
           {item.year}
         </span>
       </td>
@@ -125,7 +125,7 @@ export function Projects() {
               All Projects
             </h3>
           </div>
-          <span className="font-[var(--font-mono)] text-[0.65rem] text-[#4a5568] tracking-widest">
+          <span className="font-[var(--font-mono)] text-[0.65rem] text-[#8a9bad] tracking-widest">
             {allEngagements.length} Records
           </span>
         </div>
@@ -136,12 +136,12 @@ export function Projects() {
             {/* Column headers */}
             <thead>
               <tr className="border-b border-[rgba(0,212,255,0.1)]">
-                <th className="pb-3 pr-6 text-left font-[var(--font-mono)] text-[0.55rem] text-[#4a5568] tracking-[0.2em] uppercase w-10">#</th>
-                <th className="pb-3 pr-8 text-left font-[var(--font-mono)] text-[0.55rem] text-[#4a5568] tracking-[0.2em] uppercase">Project</th>
-                <th className="pb-3 pr-6 text-left font-[var(--font-mono)] text-[0.55rem] text-[#4a5568] tracking-[0.2em] uppercase hidden sm:table-cell">Category</th>
-                <th className="pb-3 pr-6 text-left font-[var(--font-mono)] text-[0.55rem] text-[#4a5568] tracking-[0.2em] uppercase hidden md:table-cell">Scale</th>
-                <th className="pb-3 pr-6 text-left font-[var(--font-mono)] text-[0.55rem] text-[#4a5568] tracking-[0.2em] uppercase hidden lg:table-cell">Location</th>
-                <th className="pb-3 text-right font-[var(--font-mono)] text-[0.55rem] text-[#4a5568] tracking-[0.2em] uppercase">Year</th>
+                <th className="pb-3 pr-6 text-left font-[var(--font-mono)] text-[0.55rem] text-[#8a9bad] tracking-[0.2em] uppercase w-10">#</th>
+                <th className="pb-3 pr-8 text-left font-[var(--font-mono)] text-[0.55rem] text-[#8a9bad] tracking-[0.2em] uppercase">Project</th>
+                <th className="pb-3 pr-6 text-left font-[var(--font-mono)] text-[0.55rem] text-[#8a9bad] tracking-[0.2em] uppercase hidden sm:table-cell">Category</th>
+                <th className="pb-3 pr-6 text-left font-[var(--font-mono)] text-[0.55rem] text-[#8a9bad] tracking-[0.2em] uppercase hidden md:table-cell">Scale</th>
+                <th className="pb-3 pr-6 text-left font-[var(--font-mono)] text-[0.55rem] text-[#8a9bad] tracking-[0.2em] uppercase hidden lg:table-cell">Location</th>
+                <th className="pb-3 text-right font-[var(--font-mono)] text-[0.55rem] text-[#8a9bad] tracking-[0.2em] uppercase">Year</th>
               </tr>
             </thead>
             <tbody>
@@ -153,7 +153,7 @@ export function Projects() {
         </div>
 
         {/* Footer note */}
-        <p className="font-[var(--font-mono)] text-[0.65rem] text-[#4a5568] mt-8 tracking-widest text-right">
+        <p className="font-[var(--font-mono)] text-[0.65rem] text-[#8a9bad] mt-8 tracking-widest text-right">
           Project record supplied by Nodal
         </p>
       </div>

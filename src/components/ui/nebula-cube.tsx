@@ -182,7 +182,7 @@ export function NebulaCube() {
       const techIntroAway = techIntroEl ? techIntroEl.getBoundingClientRect().top    >= vh : false;
       const visible = servicesGone && techIntroAway;
       const op = visible ? '1' : '0';
-      if (globeEl) {
+      if (globeEl && globeEl.style.visibility !== (visible ? "visible" : "hidden")) {
         globeEl.style.opacity    = op;
         globeEl.style.visibility = visible ? 'visible' : 'hidden';
         globeEl.style.pointerEvents = visible ? 'auto' : 'none';
@@ -232,7 +232,7 @@ export function NebulaCube() {
       style={{ position: 'relative', width: '100%' }}
     >
       {/* ── Fixed Globe overlay ── */}
-      <div ref={globeWrapRef} style={{ opacity: 0, position: "fixed", inset: 0, pointerEvents: "none" }}>
+      <div ref={globeWrapRef} data-globe-visibility style={{ opacity: 0, position: "fixed", inset: 0, pointerEvents: "none" }}>
         <div style={{ width: 'min(90vw, 90vh)', height: 'min(90vw, 90vh)' }}>
           <Globe
             dotColor="rgba(100, 180, 255, ALPHA)"

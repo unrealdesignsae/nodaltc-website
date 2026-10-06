@@ -1,8 +1,17 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const HalideLanding: React.FC = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [loadDrawing, setLoadDrawing] = useState(false);
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.intersectionRatio > 0) { setLoadDrawing(true); observer.disconnect(); }
+    }, { threshold: 0.01 });
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
   const canvasRef = useRef<HTMLDivElement>(null);
   const layersRef = useRef<HTMLDivElement[]>([]);
 
@@ -99,13 +108,13 @@ const HalideLanding: React.FC = () => {
           transition: transform 0.5s ease;
         }
 
-        .halide-layer-1 {
+        .halide-section[data-drawing-loaded="true"] .halide-layer-1 {
           background-image: url('/images/stage-drawing-a.png');
           background-size: cover;
           background-position: center;
           filter: brightness(0.9) contrast(1.1) saturate(1.2);
         }
-        .halide-layer-2 {
+        .halide-section[data-drawing-loaded="true"] .halide-layer-2 {
           background-image: url('/images/stage-drawing-b.png');
           background-size: cover;
           background-position: center;
@@ -174,7 +183,7 @@ const HalideLanding: React.FC = () => {
         }
       `}</style>
 
-      <section id="engineering" className="halide-section">
+      <section ref={sectionRef} data-drawing-loaded={loadDrawing} id="engineering" className="halide-section">
 
 
         {/* UI Chrome */}

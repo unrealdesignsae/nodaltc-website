@@ -8,12 +8,12 @@ const highlights = [
 
 export function SurveyHighlights() {
   return <section id="survey-highlights" className="survey-highlights quiet-wrap" aria-label="Survey capabilities">
-    <dl className="survey-highlights-grid">
-      {highlights.map(({ Icon, value, label, detail }) => <div className="survey-highlight" key={value} data-reveal>
+    <ul className="survey-highlights-grid">
+      {highlights.map(({ Icon, value, label, detail }) => <li className="survey-highlight" key={value} data-reveal>
         <div className="survey-highlight-icon" aria-hidden="true"><Icon size={34} strokeWidth={1.25}/></div>
-        <div className="survey-highlight-copy"><dt>{value}</dt><dd><span>{label}</span><p>{detail}</p></dd></div>
-      </div>)}
-    </dl>
+        <div className="survey-highlight-copy"><h3>{value}</h3><div className="survey-highlight-details"><span>{label}</span><p>{detail}</p></div></div>
+      </li>)}
+    </ul>
     <p className="survey-highlights-note">*Subject to site reception and correction signal.</p>
   </section>;
 }

@@ -56,7 +56,7 @@ function DisplayValue({ value }: { value: MotionValue<number> }) {
       </span>
       <span className="relative font-mono text-2xl text-[#00d4ff] font-black tabular-nums tracking-widest">
         {display.toString().padStart(3, "0")}
-        <span className="text-xs text-[#4a5568] ml-1">%</span>
+        <span className="text-xs text-[#8a9bad] ml-1">%</span>
       </span>
     </div>
   );
@@ -72,6 +72,7 @@ export default function ReactorKnob({
   seekFnRef?: MutableRefObject<((pct: number) => void) | null>;
 }) {
   const [isDragging, setIsDragging] = useState(false);
+  const [accessibleValue, setAccessibleValue] = useState(0);
 
   // Raw angle (unsnapped) — drives the light instantly
   const rawRotation = useMotionValue(MIN_DEG);
@@ -91,7 +92,9 @@ export default function ReactorKnob({
 
   // onValueChange uses the spring-smoothed value for any UI consumers.
   useMotionValueEvent(displayValue, "change", (latest) => {
-    onValueChange?.(Math.round(latest));
+    const rounded = Math.round(latest);
+    setAccessibleValue(rounded);
+    onValueChange?.(rounded);
   });
 
   // Pointer drag
@@ -137,11 +140,15 @@ export default function ReactorKnob({
 
     window.addEventListener("pointermove", handlePointerMove);
     window.addEventListener("pointerup", handlePointerUp);
+    window.addEventListener("pointercancel", handlePointerUp);
     return () => {
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("pointerup", handlePointerUp);
+      window.removeEventListener("pointercancel", handlePointerUp);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
     };
-  }, [isDragging, rawRotation, snappedRotation]);
+  }, [isDragging, rawRotation, snappedRotation, seekFnRef]);
 
   const ticks = Array.from({ length: TOTAL_TICKS + 1 });
 
@@ -182,6 +189,24 @@ export default function ReactorKnob({
             isDragging ? "cursor-grabbing" : "cursor-grab"
           }`}
           style={{ rotate: smoothRotation }}
+          role="slider"
+          tabIndex={0}
+          aria-label="Stage lighting level"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={accessibleValue}
+          aria-valuetext={`${accessibleValue}%`}
+          onKeyDown={event => {
+            const current = ((rawRotation.get() - MIN_DEG) / (MAX_DEG - MIN_DEG)) * 100;
+            const next = event.key === 'Home' ? 0 : event.key === 'End' ? 100
+              : ['ArrowRight','ArrowUp'].includes(event.key) ? current + 5
+              : ['ArrowLeft','ArrowDown'].includes(event.key) ? current - 5 : null;
+            if (next === null) return;
+            event.preventDefault();
+            const pct = Math.max(0, Math.min(100, next));
+            const angle = MIN_DEG + pct / 100 * (MAX_DEG - MIN_DEG);
+            rawRotation.set(angle); snappedRotation.set(angle); seekFnRef?.current?.(pct);
+          }}
           onPointerDown={handlePointerDown}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
@@ -206,8 +231,8 @@ export default function ReactorKnob({
                 }}
               />
 
-              <div className="flex flex-col items-center mt-5 opacity-40">
-                <span className="font-mono text-[8px] text-[#4a5568] tracking-widest uppercase">
+              <div className="flex flex-col items-center mt-5">
+                <span className="font-mono text-[8px] text-[#8a9bad] tracking-widest uppercase">
                   LEVEL
                 </span>
               </div>
@@ -218,7 +243,7 @@ export default function ReactorKnob({
 
       {/* Digital readout */}
       <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none">
-        <span className="text-[10px] text-[#4a5568] font-mono tracking-[0.2em] mb-1 uppercase">
+        <span className="text-[10px] text-[#8a9bad] font-mono tracking-[0.2em] mb-1 uppercase">
           Output
         </span>
         <DisplayValue value={displayValue} />

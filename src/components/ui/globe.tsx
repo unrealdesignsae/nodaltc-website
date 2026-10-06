@@ -138,9 +138,10 @@ export function Globe({
     const dpr = window.devicePixelRatio || 1;
     const w   = canvas.clientWidth;
     const h   = canvas.clientHeight;
-    canvas.width  = w * dpr;
-    canvas.height = h * dpr;
-    ctx.scale(dpr, dpr);
+    if (canvas.width !== Math.round(w * dpr) || canvas.height !== Math.round(h * dpr)) {
+      canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+    }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     const cx     = w / 2;
     const cy     = h / 2;
@@ -258,12 +259,34 @@ export function Globe({
       }
     }
 
-    animRef.current = requestAnimationFrame(drawFrame);
   }, [dotColor, arcColor, markerColor, autoRotateSpeed, connections, markers]);
 
   useEffect(() => {
-    animRef.current = requestAnimationFrame(draw);
-    return () => cancelAnimationFrame(animRef.current);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let visible = false;
+    const canRender = () => visible && !document.hidden && getComputedStyle(canvas).visibility !== "hidden";
+    const tick = () => {
+      draw();
+      if (canRender() && !preference.matches) animRef.current = requestAnimationFrame(tick);
+    };
+    const sync = () => {
+      cancelAnimationFrame(animRef.current);
+      if (canRender()) tick();
+    };
+    const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); });
+    observer.observe(canvas);
+    const visibilityRoot = canvas.closest("[data-globe-visibility]");
+    const visibilityObserver = new MutationObserver(sync);
+    if (visibilityRoot) visibilityObserver.observe(visibilityRoot, { attributes: true, attributeFilter: ["style"] });
+    const resize = new ResizeObserver(sync); resize.observe(canvas);
+    document.addEventListener('visibilitychange', sync);
+    preference.addEventListener('change', sync);
+    return () => {
+      cancelAnimationFrame(animRef.current); observer.disconnect(); resize.disconnect(); visibilityObserver.disconnect();
+      document.removeEventListener('visibilitychange', sync); preference.removeEventListener('change', sync);
+    };
   }, [draw]);
 
   const onPointerDown = useCallback((e: React.PointerEvent) => {

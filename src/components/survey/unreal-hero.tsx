@@ -10,7 +10,7 @@ useEffect(()=>{
  const canvas=canvasRef.current;
  if(!canvas)return;
  let renderer:THREE.WebGLRenderer;
- try {renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});} catch {return;}
+ try {renderer=new THREE.WebGLRenderer({canvas,antialias:false,alpha:true,powerPreference:"high-performance"});} catch {return;}
  renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 100);
@@ -128,6 +128,7 @@ useEffect(()=>{
  const media=window.matchMedia('(prefers-reduced-motion: reduce)');
  const mouse={x:0,y:0,tx:0,ty:0};
  let visible=true;
+ let lastRender=0;
  let needsRender = true;
  const resize=()=>{needsRender=true;const w=hero.clientWidth,h=hero.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();};
  resize();const ro=new ResizeObserver(resize);ro.observe(hero);
@@ -137,8 +138,10 @@ useEffect(()=>{
  const preference=()=>{needsRender=true;};
  media.addEventListener("change",preference);
  const startTime=performance.now();
- renderer.setAnimationLoop(()=>{
+ renderer.setAnimationLoop((now)=>{
  if(!visible||document.hidden || (media.matches && !needsRender))return;
+ if(!needsRender && now-lastRender < 1000/30)return;
+ lastRender=now;
  needsRender=false;
  uniforms.uTime.value=media.matches?0:(performance.now()-startTime)/1000;
  uniforms.uScroll.value=Math.max(0,Math.min(1,-hero.getBoundingClientRect().top/hero.clientHeight));
