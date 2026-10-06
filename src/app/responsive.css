@@ -1,0 +1,52 @@
+/* Responsive form controls and content-sized cards for phones and short viewports. */
+.home-enquiry input,.home-enquiry textarea{min-width:0;font-size:16px;min-height:48px}
+.home-enquiry input::placeholder,.home-enquiry textarea::placeholder{color:#8294a8}
+.home-enquiry label>span,.home-enquiry>div>span{color:#9aafc2;font-size:12px}
+.home-enquiry button[type=button]{min-height:44px;color:#a9bed1}
+.home-enquiry button[aria-pressed=true]{color:#00d4ff}
+.home-enquiry button:focus-visible,.form-again:focus-visible{outline:2px solid #00d4ff;outline-offset:4px}
+.form-again{color:#00d4ff;min-height:48px;padding:12px 18px;border:1px solid #00d4ff55;border-radius:4px;margin-top:12px}
+#contact :is(input,textarea,select,button,[role=alert],[role=status]){scroll-margin-top:120px}
+.quiet-site .quiet-form-panel{min-width:0;container-type:inline-size}
+.quiet-site .quiet-form-panel :is(input:not([type=checkbox]),select,textarea){font-size:16px;min-width:0;max-width:100%}
+.quiet-site .quiet-form-panel .field{font-size:14px}
+.quiet-site .quiet-form-panel .checks label{min-height:48px;font-size:14px;align-items:center}
+.quiet-site .quiet-form-panel .form-grid{min-width:0;grid-template-columns:repeat(2,minmax(0,1fr))}
+.quiet-site .quiet-form-panel .date-fields .field{min-width:0}
+.quiet-site .quiet-form-panel .file-drop{flex-wrap:wrap;gap:12px}
+.quiet-site .quiet-form-panel .file-drop>div{flex:1;min-width:120px}
+@container (max-width:540px){
+ .quiet-site .quiet-form-panel .form-grid,.quiet-site .quiet-form-panel .checks{grid-template-columns:1fr}
+ .quiet-site .quiet-form-panel .date-fields{display:grid;grid-template-columns:1fr;gap:16px}
+ .quiet-site .quiet-form-panel .date-to{display:none}
+ .quiet-site .quiet-form-panel .enquiry-form{padding:24px 18px}
+}
+@media(max-width:1023px){
+ .quiet-site .studio-contact-grid{grid-template-columns:1fr;gap:40px}
+ .quiet-site .contact-intro{position:static}
+ .quiet-site .studio-contact-grid .quiet-form-panel{max-width:740px}
+ #mobile-navigation a{min-height:44px;display:flex;align-items:center}
+}
+@media(max-width:767px),(max-height:600px){
+ .project-stack-item{height:auto;position:relative;top:auto;padding:0 20px;margin:28px auto;max-width:1140px}
+ .project-image-card{height:auto;min-height:480px;top:0!important}
+ .project-card-copy{padding:190px 24px 28px;overflow-wrap:anywhere}
+ .project-card-copy h3{font-size:clamp(27px,7vw,40px)}
+ .project-card-copy p{font-size:16px}
+}
+@media(max-width:480px){
+ .home-enquiry button[type=submit]{width:100%;justify-content:center}
+ #contact{padding-block:72px}
+ .quiet-site .quiet-form-panel .enquiry-form{padding:24px 16px}
+ .quiet-site .quiet-footer{overflow-wrap:anywhere}
+}
+@media(max-height:600px){
+ nav{padding-block:8px!important}
+ .quiet-site .unreal-hero{padding-top:110px;min-height:600px}
+}
+.quiet-site .studio-contact-grid{max-width:1200px;grid-template-columns:1fr 1.1fr;gap:clamp(48px,8vw,128px)}
+.shared-contact-intro{min-width:0}
+@media(max-width:1023px){.quiet-site .studio-contact-grid{grid-template-columns:1fr;gap:48px}.shared-contact-intro h2{max-width:600px}}
+@media(prefers-reduced-motion:reduce){.shared-contact-intro .animate-\[signal-pulse_2s_ease-in-out_infinite\]{animation:none}}
+.quiet-site .quiet-form-panel .submit-button{background:#00d4ff;border-color:#00d4ff;color:#070a0f;border-radius:0;font-family:var(--font-display);font-size:14px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;min-height:52px}
+.quiet-site .quiet-form-panel .submit-button:hover{box-shadow:0 0 40px #00d4ff40}

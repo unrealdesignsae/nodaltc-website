@@ -37,3 +37,41 @@ assert.match(validateDrawing({name:'drawing.pdf',size:MAX_FILE_BYTES+1}),/larger
 assert.match(validateDrawing({name:'drawing.pdf',size:0}),/empty/);
 assert.match(validateDrawing({name:'drawing.exe',size:100}),/Choose a DWG/);
 console.log('PASS: services, four drone phases, dates, attachment reference, drawing link, hidden-field exclusion and upload boundaries. No network requests.');
+
+// Shared transport regression tests: fake fetch only, no external requests.
+const {submitForm,buildBriefPayload}=load('form-submit');
+const brief=new FormData();
+Object.entries({name:'Local QA',email:'qa@example.com',company:'Local test',brief:'Do not send externally'}).forEach(([k,v])=>brief.set(k,v));
+const homePayload=buildBriefPayload(brief,'Festival / Outdoor','LOCAL-TEST-NOT-A-REAL-KEY');
+assert.equal(homePayload.replyto,'qa@example.com');
+assert.equal(homePayload.email,'qa@example.com');
+assert.equal(homePayload.event_type,'Festival / Outdoor');
+const surveyData=new FormData();
+Object.entries({name:'Local QA',contact:'qa@example.com',project:'Survey test'}).forEach(([k,v])=>surveyData.set(k,v));
+const surveyPayload=buildEnquiryPayload(surveyData,homePayload.access_key);
+assert.equal(surveyPayload.email,homePayload.email);
+assert.equal(surveyPayload.replyto,homePayload.replyto);
+assert.equal(surveyPayload.access_key,homePayload.access_key);
+for(const payload of [homePayload,surveyPayload]){
+  let calls=0;
+  await submitForm(payload,async(url,options)=>{
+    calls++;
+    assert.equal(url,'https://api.web3forms.com/submit');
+    assert.equal(options.method,'POST');
+    assert.equal(options.headers['Content-Type'],'application/json');
+    assert.deepEqual(JSON.parse(options.body),payload);
+    return new Response(JSON.stringify({success:true}),{status:200});
+  });
+  assert.equal(calls,1);
+  await assert.rejects(()=>submitForm(payload,async()=>new Response(JSON.stringify({success:false}),{status:200})),/could not be sent/);
+  await assert.rejects(()=>submitForm(payload,async()=>new Response(JSON.stringify({success:true}),{status:500})),/could not be sent/);
+  await assert.rejects(()=>submitForm(payload,async()=>new Response('{}',{status:429})),/wait a minute/);
+  await assert.rejects(()=>submitForm(payload,async()=>new Response('not JSON',{status:502})),/could not be sent/);
+  await assert.rejects(()=>submitForm(payload,async()=>{throw new TypeError('network offline')}),/Check your internet/);
+}
+surveyData.set('contact','+971500000000');
+const phonePayload=buildEnquiryPayload(surveyData,'local');
+assert.equal(phonePayload.phone,'+971500000000');
+assert.equal(phonePayload.email,undefined);
+assert.equal(phonePayload.replyto,undefined);
+console.log('PASS: both forms use identical transport; success, provider rejection, HTTP errors, rate limits, invalid JSON and offline behavior. No external email.');

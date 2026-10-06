@@ -33,7 +33,7 @@ export function buildEnquiryPayload(data:FormData, accessKey:string, attachmentK
   const selected=data.getAll('services').map(String);
   const contact=String(data.get('contact')||'').trim();
   const payload:Record<string,unknown>={access_key:accessKey,subject:`Nodal Site Survey enquiry — ${String(data.get('project')||data.get('name')).slice(0,120)}`,from_name:'Nodal Site Survey',name:data.get('name'),contact,event_project:data.get('project'),location:data.get('location'),site_size:data.get('size'),date_start:data.get('dateStart'),date_end:data.get('dateEnd'),services:selected.join(', '),drone_phases:selected.includes('Drone Site Scan (add-on)')?data.getAll('dronePhases').join(', '):'',drawing_link:data.get('drawingLink'),set_out_days:selected.includes('GPS set-out')?data.get('days'):'',message:data.get('message'),botcheck:''};
-  if(contact.includes('@'))payload.replyto=contact;
+  if(contact.includes('@')){payload.email=contact;payload.replyto=contact;}else{payload.phone=contact;}
   if(attachmentKey)payload.attachment=attachmentKey;
   return payload;
 }

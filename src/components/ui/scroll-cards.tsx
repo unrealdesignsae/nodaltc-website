@@ -58,12 +58,12 @@ const Card: FC<iCardProps> = ({
 
   return (
     <div
-      className="h-[85vh] flex items-center justify-center sticky top-[10vh] px-4 md:px-0"
+      className="project-stack-item h-[85vh] flex items-center justify-center sticky top-[10vh] px-4 md:px-0"
       style={{ zIndex: i + 1 }}
     >
       <div
         ref={cardRef}
-        className="relative flex flex-col w-full max-w-[1100px] h-[65vh] md:h-[60vh] overflow-hidden rounded-[6px] border border-[rgba(0,212,255,0.12)] shadow-[0_8px_48px_rgba(0,0,0,0.6)]"
+        className="project-image-card relative flex flex-col w-full max-w-[1100px] h-[65vh] md:h-[60vh] overflow-hidden rounded-[6px] border border-[rgba(0,212,255,0.12)] shadow-[0_8px_48px_rgba(0,0,0,0.6)]"
         style={{
           backgroundColor: color,
           // Each successive card has a slight downward offset for the stacking effect
@@ -85,7 +85,7 @@ const Card: FC<iCardProps> = ({
         </div>
 
         {/* Content overlay — pinned to bottom */}
-        <div className="relative z-10 mt-auto p-8 md:p-12">
+        <div className="project-card-copy relative z-10 mt-auto p-8 md:p-12">
           {/* Tag */}
           <span
             className="font-[var(--font-mono)] text-[0.65rem] tracking-[0.2em] uppercase block mb-3"

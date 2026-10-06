@@ -1,4 +1,5 @@
-import Link from 'next/link';
+import { ContactIntro } from '@/components/contact-intro';
+import { Footer } from '@/components/footer';
 import Image from 'next/image';
 import type { Metadata } from 'next';
 import { SITE_URL } from '@/lib/survey-config';
@@ -6,7 +7,7 @@ import { ContactLinks } from '@/components/contact-links';
 import { DeliverableExamples } from '@/components/survey/deliverable-examples';
 import { SurveyHighlights } from '@/components/survey/survey-highlights';
 export const metadata:Metadata={title:'GPS Site Survey & Set-Out | Nodal UAE',description:'GPS site survey, set-out and daily drone scans for festivals and outdoor events in the UAE.',alternates:{canonical:`${SITE_URL}/site-survey/`},openGraph:{title:'Nodal Site Survey',url:`${SITE_URL}/site-survey/`}};
-import { ArrowUpRight, ArrowUp, Check, Satellite, ScanLine, Layers, MapPinned, PartyPopper, Construction, MapPin, Tent, Flag } from 'lucide-react';
+import { ArrowUpRight, Check, Satellite, ScanLine, Layers, MapPinned, PartyPopper, Construction, MapPin, Tent, Flag } from 'lucide-react';
 import { UnrealHero } from '@/components/survey/unreal-hero';
 import { PageMotion } from '@/components/survey/page-motion';
 import { ScanReveal } from '@/components/survey/scan-reveal';
@@ -69,9 +70,9 @@ export default function Home() {
         <div className="quiet-faq-list">{faqs.map(([q,a]) => <details className="quiet-faq" name="survey-questions" key={q} data-reveal><summary>{q}<span className="quiet-plus" aria-hidden="true"/></summary><p>{a}</p></details>)}</div>
       </section>
       <section id="contact" className="quiet-contact quiet-section">
-        <div className="quiet-wrap studio-contact-grid"><div className="contact-intro"><p className="quiet-label" data-reveal>LET’S GET STARTED</p><Heading first="Your next site." second="Precisely planned."/><p className="quiet-copy" data-reveal>Tell us what you’re building, where, and when. Share your drawing and the support you need.</p><a className="quiet-email" href="mailto:info@nodaltc.com">info@nodaltc.com <ArrowUpRight size={16}/></a><p className="quiet-location">Dubai, UAE · Saudi Arabia & GCC on request</p><ContactLinks/></div><div className="quiet-form-panel" id="enquiry"><EnquiryForm/></div></div>
+        <div className="quiet-wrap studio-contact-grid"><ContactIntro survey /><div className="quiet-form-panel" id="enquiry"><EnquiryForm/></div></div>
       </section>
     </main>
-    <footer className="quiet-wrap quiet-footer"><Link href="/" className="quiet-footer-name">NODAL</Link><div><p>© 2026 Nodal Technical Consultancy FZ-LLC · Dubai, UAE</p><div className="footer-links"><Link href="/">Main website</Link><Link href="/#services">Technical services</Link><a href="mailto:info@nodaltc.com">info@nodaltc.com</a><Link href="/privacy/">Privacy</Link></div></div><a href="#hero" className="quiet-back">Back to top <ArrowUp size={15}/></a></footer><ContactLinks floating/>
+    <Footer /><ContactLinks floating/>
   </div>;
 }

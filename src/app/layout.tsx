@@ -5,6 +5,7 @@ import './survey.css';
 import './experience.css';
 import './integration.css';
 import './survey-symbols.css';
+import './responsive.css';
 import { SITE_URL } from '@/lib/survey-config';
 const inter=Inter({subsets:['latin'],variable:'--font-body',weight:['300','400','500','600']});
 const rajdhani=Rajdhani({subsets:['latin'],variable:'--font-display',weight:['400','500','600','700']});

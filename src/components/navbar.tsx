@@ -136,7 +136,7 @@ export function Navbar() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div id="mobile-navigation" className="lg:hidden absolute top-full left-0 right-0 bg-[#070a0f]/98 border-b border-[rgba(0,212,255,0.12)] p-6 flex flex-col gap-4">
+        <div id="mobile-navigation" className="max-h-[calc(100dvh-85px)] overflow-y-auto overscroll-contain lg:hidden absolute top-full left-0 right-0 bg-[#070a0f]/98 border-b border-[rgba(0,212,255,0.12)] p-6 flex flex-col gap-4">
           {navLinks.map((link) => (
             <a
               key={link.href}

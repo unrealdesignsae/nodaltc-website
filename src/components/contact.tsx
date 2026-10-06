@@ -1,7 +1,10 @@
 ﻿"use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { ContactIntro } from "@/components/contact-intro";
+import { FORM_KEY } from "@/lib/survey-config";
+import { buildBriefPayload, submitForm } from "@/lib/form-submit";
 
 const EVENT_TYPES = [
   "Festival / Outdoor",
@@ -12,10 +15,6 @@ const EVENT_TYPES = [
   "Other",
 ];
 
-// ⬇️ Paste your free Web3Forms access key here.
-// Get it in 30s at https://web3forms.com — just enter info@nodaltc.com and check that inbox.
-const WEB3FORMS_ACCESS_KEY = "aab72214-a231-401a-a55b-3538d2f2d449";
-
 function Field({
   label,
   children,
@@ -24,17 +23,17 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <div className="group flex flex-col gap-2">
-      <label className="font-[var(--font-mono)] text-[0.68rem] tracking-[0.14em] text-[#3a4558] uppercase transition-colors duration-300 group-focus-within:text-[#00d4ff]">
+    <label className="group flex flex-col gap-2">
+      <span className="font-[var(--font-mono)] text-[0.68rem] tracking-[0.14em] text-[#3a4558] uppercase transition-colors duration-300 group-focus-within:text-[#00d4ff]">
         {label}
-      </label>
+      </span>
       {children}
-    </div>
+    </label>
   );
 }
 
 const inputBase =
-  "bg-transparent border-b border-[rgba(0,212,255,0.15)] text-[#e8f0fe] text-sm py-3 outline-none transition-all duration-300 placeholder:text-[#2a3447] focus:border-[#00d4ff] w-full";
+  "bg-transparent border-b border-[rgba(0,212,255,0.15)] text-[#e8f0fe] text-base py-3 outline-none transition-all duration-300 placeholder:text-[#2a3447] focus:border-[#00d4ff] w-full";
 
 export function Contact() {
   const [active, setActive] = useState<string | null>(null);
@@ -42,9 +41,15 @@ export function Contact() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const sendingRef = useRef(false);
+  const successRef = useRef<HTMLDivElement>(null);
+  const errorRef = useRef<HTMLParagraphElement>(null);
+  useEffect(() => { if (submitted) successRef.current?.focus(); }, [submitted]);
+  useEffect(() => { if (error) errorRef.current?.focus(); }, [error]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (sendingRef.current) return;
     setError(null);
 
     const formData = new FormData(e.currentTarget);
@@ -52,43 +57,19 @@ export function Contact() {
     // Honeypot: hidden field only bots fill in — silently drop the submission.
     if (formData.get("botcheck")) return;
 
-    const payload = {
-      access_key: WEB3FORMS_ACCESS_KEY,
-      subject: `New brief from ${formData.get("name") || "the website"}`,
-      from_name: "Nodal TC Website",
-      name: formData.get("name"),
-      company: formData.get("company"),
-      email: formData.get("email"),
-      event_type: active,
-      brief: formData.get("brief"),
-      replyto: formData.get("email"),
-    };
-
+    const payload = buildBriefPayload(formData, active, FORM_KEY);
+    if (!String(payload.name).trim()) { setError("Please enter your name."); return; }
+    sendingRef.current = true;
     setSending(true);
     try {
-      const res = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-
-      if (!data.success) {
-        throw new Error("Send failed");
-      }
-
+      await submitForm(payload);
       setSubmitted(true);
       setActive(null);
-      setTimeout(() => {
-        setSubmitted(false);
-        formRef.current?.reset();
-      }, 4000);
-    } catch {
-      setError("Something went wrong. Please email us directly at info@nodaltc.com.");
+      formRef.current?.reset();
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Unable to send. Please email info@nodaltc.com.");
     } finally {
+      sendingRef.current = false;
       setSending(false);
     }
   };
@@ -116,84 +97,7 @@ export function Contact() {
         {/* ── Two-column split ── */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-20 lg:gap-32 items-start">
 
-          {/* Left: Statement */}
-          <div>
-            <h2
-              className="font-[var(--font-display)] font-bold leading-[1.05] text-[#e8f0fe] mb-8"
-              style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.8rem)" }}
-            >
-              Start a{" "}
-              <span className="text-[#00d4ff]">conversation.</span>
-            </h2>
-
-            <p className="text-[#5a6478] text-base leading-relaxed max-w-[360px] mb-12">
-              We respond to every brief within 24 hours. Project enquiries,
-              technical questions, or an event you want to talk through — all
-              welcome.
-            </p>
-
-            {/* Contact atoms */}
-            <div className="flex flex-col gap-6">
-              {[
-                {
-                  icon: (
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.8 1.2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.78 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                  ),
-                  label: "+971 50 000 0000 · placeholder",
-                  href: "#contact",
-                },
-                {
-                  icon: (
-                    <>
-                      <rect x="2" y="4" width="20" height="16" rx="2" />
-                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                    </>
-                  ),
-                  label: "info@nodaltc.com",
-                  href: "mailto:info@nodaltc.com",
-                },
-                {
-                  icon: (
-                    <>
-                      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                      <circle cx="12" cy="10" r="3" />
-                    </>
-                  ),
-                  label: "Dubai, UAE — global delivery",
-                  href: "#",
-                },
-              ].map(({ icon, label, href }) => (
-                <a
-                  key={label}
-                  href={href}
-                  className="group inline-flex items-center gap-3 text-[#5a6478] text-sm hover:text-[#e8f0fe] transition-colors duration-300"
-                >
-                  <svg
-                    width="15"
-                    height="15"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="flex-shrink-0 text-[#00d4ff]"
-                  >
-                    {icon}
-                  </svg>
-                  {label}
-                </a>
-              ))}
-            </div>
-
-            {/* Availability signal */}
-            <div className="mt-12 inline-flex items-center gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00ff88] animate-[signal-pulse_2s_ease-in-out_infinite]" />
-              <span className="font-[var(--font-mono)] text-[0.68rem] tracking-[0.12em] text-[#00ff88] uppercase">
-                Accepting briefs for 2026 — 2027
-              </span>
-            </div>
-          </div>
+          <ContactIntro />
 
           {/* Right: Form */}
           <div className="relative">
@@ -201,6 +105,7 @@ export function Contact() {
               {submitted ? (
                 <motion.div
                   key="success"
+                  ref={successRef} role="status" tabIndex={-1}
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -12 }}
@@ -228,17 +133,19 @@ export function Contact() {
                     We&apos;ll be in touch within 24 hours. Keep an eye on your
                     inbox.
                   </p>
+                  <button type="button" className="form-again" onClick={() => setSubmitted(false)}>Send another brief</button>
                 </motion.div>
               ) : (
                 <motion.form
                   key="form"
                   ref={formRef}
                   onSubmit={handleSubmit}
+                  aria-label="Homepage enquiry" aria-busy={sending}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="flex flex-col gap-8"
+                  className="home-enquiry flex flex-col gap-8"
                 >
                   {/* Honeypot — hidden from users, catches bots */}
                   <input
@@ -256,7 +163,7 @@ export function Contact() {
                     <Field label="Name">
                       <input
                         type="text"
-                        name="name"
+                        name="name" autoComplete="name" maxLength={150} disabled={sending}
                         placeholder="Your name"
                         required
                         className={inputBase}
@@ -265,7 +172,7 @@ export function Contact() {
                     <Field label="Company">
                       <input
                         type="text"
-                        name="company"
+                        name="company" autoComplete="organization" maxLength={200} disabled={sending}
                         placeholder="Organisation"
                         className={inputBase}
                       />
@@ -275,7 +182,7 @@ export function Contact() {
                   <Field label="Email">
                     <input
                       type="email"
-                      name="email"
+                      name="email" autoComplete="email" inputMode="email" maxLength={254} disabled={sending}
                       placeholder="your@email.com"
                       required
                       className={inputBase}
@@ -291,6 +198,7 @@ export function Contact() {
                       {EVENT_TYPES.map((type) => (
                         <button
                           key={type}
+                          disabled={sending} aria-pressed={active === type}
                           type="button"
                           onClick={() =>
                             setActive(active === type ? null : type)
@@ -309,7 +217,7 @@ export function Contact() {
 
                   <Field label="Brief">
                     <textarea
-                      name="brief"
+                      name="brief" maxLength={5000} disabled={sending}
                       rows={4}
                       placeholder="Event scale, location, timeline, technical needs..."
                       className={`${inputBase} resize-none`}
@@ -317,7 +225,7 @@ export function Contact() {
                   </Field>
 
                   {error && (
-                    <p className="text-xs text-[#ff6b6b] font-[var(--font-mono)]">
+                    <p ref={errorRef} role="alert" tabIndex={-1} className="text-sm text-[#ff9999] font-[var(--font-mono)]">
                       {error}
                     </p>
                   )}

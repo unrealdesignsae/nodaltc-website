@@ -35,7 +35,7 @@ function InstagramIcon() {
 
 export function Footer() {
   return (
-    <footer className="relative overflow-hidden bg-[#070a0f] border-t border-[rgba(0,212,255,0.12)]">
+    <footer className="shared-footer relative overflow-hidden bg-[#070a0f] border-t border-[rgba(0,212,255,0.12)]">
       {/* ─── Bottom bar ─── */}
       <div className="relative z-10 max-w-[1200px] mx-auto px-6 pt-6 pb-8">
         <div className="flex flex-col items-center gap-4">
@@ -46,7 +46,7 @@ export function Footer() {
             <a
               href="#"
               aria-label="LinkedIn"
-              className="group relative flex items-center justify-center text-[#4a5568] transition-all duration-300 hover:text-[#00d4ff] hover:drop-shadow-[0_0_8px_rgba(0,212,255,0.6)]"
+              className="group relative min-h-11 min-w-11 flex items-center justify-center text-[#4a5568] transition-all duration-300 hover:text-[#00d4ff] hover:drop-shadow-[0_0_8px_rgba(0,212,255,0.6)]"
             >
               <LinkedInIcon />
             </a>
@@ -55,20 +55,20 @@ export function Footer() {
             <a
               href="#"
               aria-label="Instagram"
-              className="group relative flex items-center justify-center text-[#4a5568] transition-all duration-300 hover:text-[#b464ff] hover:drop-shadow-[0_0_8px_rgba(180,100,255,0.6)]"
+              className="group relative min-h-11 min-w-11 flex items-center justify-center text-[#4a5568] transition-all duration-300 hover:text-[#b464ff] hover:drop-shadow-[0_0_8px_rgba(180,100,255,0.6)]"
             >
               <InstagramIcon />
             </a>
           </div>
 
-          <p className="font-[var(--font-mono)] text-[0.65rem] text-[#4a5568] tracking-widest uppercase">
+          <p className="text-center font-[var(--font-mono)] text-[0.65rem] text-[#4a5568] tracking-widest uppercase">
             &copy; {new Date().getFullYear()} Nodal Technical Consultancy FZ-LLC. All rights reserved.
           </p>
         </div>
       </div>
 
       {/* ─── Text hover effect ─── */}
-      <div className="lg:flex hidden h-[22rem] -mt-20 -mb-24 relative z-10">
+      <div className="flex h-[clamp(120px,28vw,352px)] -mt-6 lg:-mt-20 -mb-8 lg:-mb-24 relative z-10">
         <TextHoverEffect text="Nodal" className="z-50" />
       </div>
 
